@@ -15,7 +15,6 @@ export default function InstantMeeting() {
     dispatch(setError(null))
 
     try {
-      console.log('Creating instant meeting...')
        "use server"
       const response = await fetch('/api/meetings', {
        
@@ -28,10 +27,8 @@ export default function InstantMeeting() {
           title: 'Instant Meeting',
         }),
       })
-      console.log('API Response:', response.status)
 
       const result = await response.json()
-      console.log('API Result:', result)
 
       if (!response.ok) {
         throw new Error(result.error || 'Failed to create meeting')

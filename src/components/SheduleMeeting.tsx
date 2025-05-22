@@ -33,10 +33,8 @@ export default function ScheduledMeeting() {
 
   const createScheduledMeeting = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted', formData)
     
     if (!isFormValid()) {
-      console.log('Form validation failed')
       dispatch(setError('Please fill all fields and ensure the meeting is scheduled for a future time'))
       return
     }
@@ -46,9 +44,7 @@ export default function ScheduledMeeting() {
     dispatch(setError(null))
 
     try {
-      console.log('Creating meeting...')
       const startTime = new Date(`${formData.date}T${formData.time}`).toISOString()
-      console.log('Start time:', startTime)
 
       const response = await fetch('/api/meetings', {
         method: 'POST',
@@ -62,10 +58,8 @@ export default function ScheduledMeeting() {
           duration: formData.duration,
         }),
       })
-      console.log('API Response:', response.status)
 
       const result = await response.json()
-      console.log('API Result:', result)
 
       if (!response.ok) {
         throw new Error(result.error || 'Failed to create meeting')

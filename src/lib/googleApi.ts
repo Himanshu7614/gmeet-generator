@@ -1,4 +1,3 @@
-// src/lib/google-api.ts
 import { google } from 'googleapis'
 
 export interface CreateMeetingParams {
@@ -23,14 +22,12 @@ export async function createGoogleMeetLink({
       throw new Error('Missing Google OAuth credentials')
     }
 
-    console.log('Google API: Initializing OAuth2 client...')
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
       process.env.NEXTAUTH_URL
     )
     
-    console.log('Google API: Setting credentials...')
     oauth2Client.setCredentials({ 
       access_token: accessToken,
       scope: 'https://www.googleapis.com/auth/calendar'
@@ -38,12 +35,8 @@ export async function createGoogleMeetLink({
 
     // Verify the access token
     try {
-      console.log('Google API: Verifying access token...')
       const tokenInfo = await oauth2Client.getTokenInfo(accessToken)
-      console.log('Google API: Token info:', {
-        scopes: tokenInfo.scopes,
-        expires_in: tokenInfo.expiry_date
-      })
+
     } catch (tokenError) {
       console.error('Google API: Token validation failed:', tokenError)
       if (tokenError instanceof Error) {
@@ -57,7 +50,6 @@ export async function createGoogleMeetLink({
       throw new Error('Token validation failed')
     }
 
-    console.log('Google API: Creating calendar client...')
     const calendar = google.calendar({ 
       version: 'v3', 
       auth: oauth2Client 
@@ -66,7 +58,6 @@ export async function createGoogleMeetLink({
     const start = startTime ? new Date(startTime) : new Date()
     const end = new Date(start.getTime() + duration * 60000)
 
-    console.log('Google API: Preparing event data...')
     const event = {
       summary: title,
       start: {
@@ -88,18 +79,13 @@ export async function createGoogleMeetLink({
       attendees: [],
     }
 
-    console.log('Google API: Creating calendar event...')
     try {
       const response = await calendar.events.insert({
         calendarId: 'primary',
         requestBody: event,
         conferenceDataVersion: 1,
       })
-      console.log('Google API: Calendar event created:', {
-        id: response.data.id,
-        hasConferenceData: !!response.data.conferenceData,
-        hasEntryPoints: !!response.data.conferenceData?.entryPoints
-      })
+
 
       const meetLink = response.data.conferenceData?.entryPoints?.find(
         entry => entry.entryPointType === 'video'

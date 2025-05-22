@@ -18,15 +18,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('API: Starting meeting creation...')
     const session = await getServerSession(authOptions) as Session & { accessToken?: string }
     
-    console.log('API: Session data:', {
-      hasSession: !!session,
-      hasAccessToken: !!session?.accessToken,
-      clientId: process.env.GOOGLE_CLIENT_ID ? 'Set' : 'Not Set',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'Set' : 'Not Set'
-    })
+
 
     if (!session) {
       console.log('API: No session found')
@@ -37,19 +31,14 @@ export async function POST(request: NextRequest) {
     }
 
     if (!session.accessToken) {
-      console.log('API: No access token found in session')
       return NextResponse.json(
         { error: 'No access token - Please sign in again' },
         { status: 401 }
       )
     }
 
-    console.log('API: Session found, parsing request body...')
     const body = await request.json()
     const { title, startTime, duration, type } = body
-    console.log('API: Request body:', { title, startTime, duration, type })
-
-    console.log('API: Creating Google Meet link...')
     try {
       const result = await createGoogleMeetLink({
         title: title || (type === 'instant' ? 'Instant Meeting' : 'Scheduled Meeting'),
@@ -57,12 +46,6 @@ export async function POST(request: NextRequest) {
         duration: duration || 60,
         accessToken: session.accessToken
       })
-      console.log('API: Google Meet link created successfully:', {
-        hasMeetLink: !!result.meetLink,
-        hasMeetId: !!result.meetId,
-        hasEventId: !!result.eventId
-      })
-
       return NextResponse.json({
         success: true,
         data: {

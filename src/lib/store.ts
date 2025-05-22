@@ -1,4 +1,3 @@
-// src/lib/store.ts
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface Meeting {
