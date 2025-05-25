@@ -3,8 +3,8 @@ import GoogleProvider from "next-auth/providers/google"
 export const authOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID || '951128900258-1hqt359h97d9ov88elfa9rcec72vp8r8.apps.googleusercontent.com',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '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',
       authorization: {
         params: {
           prompt: "consent",
@@ -15,6 +15,7 @@ export const authOptions = {
       }
     })
   ],
+  secret: process.env.NEXTAUTH_SECRET || '986e26fc-eb5d-484e-810a-a5f5e1cda89d',
   debug: process.env.NODE_ENV === 'development',
   callbacks: {
     async jwt({ token, account }: any) {
@@ -36,5 +37,5 @@ export const authOptions = {
   },
   session: {
     strategy: "jwt" as const,
-  },
+  }
 }
